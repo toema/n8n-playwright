@@ -30,7 +30,7 @@
     "setup:clean": "rm -rf dist/nodes/browsers && pnpm setup",
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
-    "format": "prettier nodes credentials package.json --write",
+    "format": "prettier nodes package.json --write",
     "lint": "eslint nodes package.json",
     "lintfix": "eslint nodes package.json --fix",
     "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes  package.json"
