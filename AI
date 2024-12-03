@@ -1,0 +1,53 @@
+#!/bin/bash
+
+
+## This script turns all you src code into .txt so you feed this codebase into any selected LLM with a small context 
+# Create ai_files directory if it doesn't exist
+mkdir -p ai_files
+
+# Remove any existing files in ai_files
+rm -rf ai_files/*
+
+# Associative array to keep track of file counts
+declare -A file_counts
+
+# Function to copy file with path comment and handle naming conflicts
+copy_file() {
+    local file=$1
+    local relative_path=${file#./}
+    local base_name=$(basename "${file%.*}")
+    
+    if [[ -v "file_counts[$base_name]" ]]; then
+        file_counts[$base_name]=$((file_counts[$base_name] + 1))
+        dest_file="ai_files/${base_name}_${file_counts[$base_name]}.txt"
+    else
+        # file_counts[$base_name]=22
+        dest_file="ai_files/${base_name}.txt"
+    fi
+    
+    echo "// File: $relative_path" > "$dest_file"
+    cat "$file" >> "$dest_file"
+}
+
+# Copy all files from the base directory to ai_files, excluding dot files and directories
+find . -type f \
+    -not -path '*/\.*' \
+    -not -name '.*' \
+    -not -path './ai_files/*' \
+    -not -path './pnpm-lock.yaml' \
+    -not -path './package-lock.json' \
+    -not -path './nodes/browsers/*' \
+    -not -path './dist/nodes/browsers/*' \
+    -not -path './AI' \
+    -not -path './node_modules/*' \
+    | while read -r file; do
+    copy_file "$file"
+done
+
+# Add ai_files to git
+# git add ai_files
+
+# Inform the user
+echo "Files copied from the base directory to ai_files, paths added as comments, and extensions changed to .txt"
+echo "Files and folders starting with dots were excluded"
+echo "Files with the same name have been numbered to avoid conflicts"

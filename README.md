@@ -1,46 +1,105 @@
-![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
+# n8n-nodes-playwright
 
-# n8n-nodes-starter
+This is an n8n community node. It lets you automate browser actions using Playwright in your n8n workflows.
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](n8n.io). It includes the node linter and other dependencies.
+[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+[Installation](#installation)
+[Operations](#operations)
+[Compatibility](#compatibility)
+[Resources](#resources)
+[Version history](#version-history)
 
-## Prerequisites
+## Installation
 
-You need the following installed on your development machine:
+Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
-* [git](https://git-scm.com/downloads)
-* Node.js and pnpm. Minimum version Node 18. You can find instructions on how to install both using nvm (Node Version Manager) for Linux, Mac, and WSL [here](https://github.com/nvm-sh/nvm). For Windows users, refer to Microsoft's guide to [Install NodeJS on Windows](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows).
-* Install n8n with:
-  ```
-  pnpm install n8n -g
-  ```
-* Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
+```bash
+pnpm install n8n-nodes-playwright
 
-## Using this starter
+```
 
-These are the basic steps for working with the starter. For detailed guidance on creating and publishing nodes, refer to the [documentation](https://docs.n8n.io/integrations/creating-nodes/).
+Note: The package will automatically download and set up the required browser binaries during installation. This requires approximately 1GB of disk space.
 
-1. [Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template repository.
-2. Clone your new repo:
-   ```
-   git clone https://github.com/<your organization>/<your-repo-name>.git
-   ```
-3. Run `pnpm i` to install dependencies.
-4. Open the project in your editor.
-5. Browse the examples in `/nodes` and `/credentials`. Modify the examples, or replace them with your own nodes.
-6. Update the `package.json` to match your details.
-7. Run `pnpm lint` to check for errors or `pnpm lintfix` to automatically fix errors when possible.
-8. Test your node locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
-9. Replace this README with documentation for your node. Use the [README_TEMPLATE](README_TEMPLATE.md) to get started.
-10. Update the LICENSE file to use your details.
-11. [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) your package to npm.
+If you need to manually trigger the browser setup:
 
-## More information
+```bash
+pnpm rebuild n8n-nodes-playwright
 
-Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/creating-nodes/) for detailed information on building your own nodes.
+```
 
-## License
+Operations
+----------
+
+This node supports the following operations:
+
+-   Navigate: Go to a specified URL
+-   Take Screenshot: Capture a screenshot of a webpage
+-   Get Text: Extract text from an element using CSS selector
+-   Click Element: Click on an element using CSS selector
+-   Fill Form: Fill a form field using CSS selector
+
+### Browser Options
+
+-   Choose between Chromium, Firefox, or WebKit
+-   Configure headless mode
+-   Adjust operation speed with slow motion option
+
+### Screenshot Options
+
+-   Full page capture
+-   Custom save path
+-   Base64 output
+
+Compatibility
+-------------
+
+-   Requires n8n version 1.0.0 or later
+-   Tested with Playwright version 1.49.0
+-   Supports Windows, macOS, and Linux
+
+### System Requirements
+
+-   Node.js 18.10 or later
+-   Approximately 1GB disk space for browser binaries
+-   Additional system dependencies may be required for browser automation
+
+Resources
+---------
+
+-   [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
+-   [Playwright documentation](https://playwright.dev/docs/intro)
+
+Version history
+---------------
+
+### 0.1.0
+
+-   Initial release
+-   Basic browser automation operations
+-   Support for Chromium, Firefox, and WebKit.
+-   Screenshot and form interaction capabilities
+
+### Troubleshooting
+
+If browsers are not installed correctly:
+
+1.  Clean the installation:
+
+```
+bashrm -rf ~/.cache/ms-playwright
+# or for Windows:
+# rmdir /s /q %USERPROFILE%\AppData\Local\ms-playwright
+
+```
+
+1.  Rebuild the package:
+
+```
+bashpnpm rebuild n8n-nodes-playwright
+
+```
+
+### License
 
 [MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)

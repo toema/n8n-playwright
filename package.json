@@ -1,19 +1,19 @@
 {
-  "name": "n8n-nodes-<...>",
-  "version": "0.1.0",
-  "description": "",
+  "name": "n8n-nodes-playwright",
+  "version": "0.1.1",
+  "description": "n8n node for browser automation using Playwright",
   "keywords": [
     "n8n-community-node-package"
   ],
   "license": "MIT",
   "homepage": "",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Mohamed Toema",
+    "email": "m.toema20@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+    "url": "https://github.com/toema/n8n-playwright"
   },
   "engines": {
     "node": ">=18.10",
@@ -23,37 +23,46 @@
   "main": "index.js",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
+    "postinstall": "node dist/nodes/scripts/setup-browsers.js",
+    "rebuild": "node dist/nodes/scripts/setup-browsers.js",
+    "setup": "node dist/nodes/scripts/setup-browsers.js",
+    "test:setup": "ts-node scripts/test-setup.ts",
+    "setup:clean": "rm -rf dist/nodes/browsers && pnpm setup",
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
-    "format": "prettier nodes credentials --write",
+    "format": "prettier nodes credentials package.json --write",
     "lint": "eslint nodes credentials package.json",
     "lintfix": "eslint nodes credentials package.json --fix",
     "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "nodes/browsers"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
-    "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
-    ],
     "nodes": [
-      "dist/nodes/ExampleNode/ExampleNode.node.js",
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/Playwright/PlaywrightNode.node.js"
     ]
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.10.1",
     "@typescript-eslint/parser": "^7.15.0",
     "eslint": "^8.56.0",
     "eslint-plugin-n8n-nodes-base": "^1.16.1",
     "gulp": "^4.0.2",
     "n8n-workflow": "*",
+    "playwright": "^1.49.0",
     "prettier": "^3.3.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.3"
   },
   "peerDependencies": {
     "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "playwright": "^1.49.0"
   }
 }

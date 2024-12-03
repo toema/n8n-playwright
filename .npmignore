@@ -1,2 +1,16 @@
 .DS_Store
 *.tsbuildinfo
+node_modules/ 
+src/ 
+tests/ 
+.git/ 
+.github/ 
+.vscode/ 
+.idea/
+*.log
+*.tsbuildinfo 
+.eslintrc*
+.prettierrc*
+.gitignore 
+gulpfile.js 
+tsconfig.json

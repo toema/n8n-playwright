@@ -6,3 +6,7 @@ dist
 npm-debug.log*
 yarn.lock
 .vscode/launch.json
+ai_files
+!nodes/browsers/.gitkeep
+nodes/browsers/*
+.vscode
