@@ -1,3 +1,4 @@
+# Development files
 .DS_Store
 *.tsbuildinfo
 node_modules/ 
@@ -14,3 +15,7 @@ tests/
 .gitignore 
 gulpfile.js 
 tsconfig.json
+
+
+# Don't ignore these files
+!dist/
