@@ -10,3 +10,4 @@ ai_files
 !nodes/browsers/.gitkeep
 nodes/browsers/*
 .vscode
+*.tgz
