@@ -73,7 +73,7 @@ Resources
 Version history
 ---------------
 
-### 0.1.0
+### 0.1.*
 
 -   Initial release
 -   Basic browser automation operations
