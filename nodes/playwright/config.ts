@@ -1,10 +1,19 @@
 import { BrowserPaths } from './types';
 
-export const browserVersions = {
+export type BrowserType = 'chromium' | 'firefox' | 'webkit';
+
+export const browserVersions: Record<BrowserType, string> = {
     chromium: '1140',
     firefox: '1465',
     webkit: '2083'
 };
+export function matchBrowserVersion(folderName: string, browserType: BrowserType): boolean {
+    const version = browserVersions[browserType];
+    // Handle partial version matches and different formats
+    return folderName.startsWith(`${browserType}-`) &&
+        folderName.includes(version.substring(0, 4)); // Match first 4 digits
+}
+
 
 export const browserPaths: BrowserPaths = {
     'chromium': {

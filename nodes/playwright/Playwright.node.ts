@@ -4,6 +4,8 @@ import { platform } from 'os';
 import { getBrowserExecutablePath } from './utils';
 import { handleOperation } from './operations';
 import { IBrowserOptions } from './types';
+import { installBrowser } from '../scripts/setup-browsers';
+import { BrowserType } from './config';
 
 export class PlaywrightNode implements INodeType {
     description : INodeTypeDescription = {
@@ -181,14 +183,24 @@ export class PlaywrightNode implements INodeType {
         for (let i = 0; i < items.length; i++) {
             const operation = this.getNodeParameter('operation', i) as string;
             const url = this.getNodeParameter('url', i) as string;
-            const browserType = this.getNodeParameter('browser', i) as string;
+            const browserType = this.getNodeParameter('browser', i) as BrowserType;
             const browserOptions = this.getNodeParameter('browserOptions', i) as IBrowserOptions;
 
             try {
                 const playwright = require('playwright');
-                const browsersPath = join(__dirname, '..','browsers');
-                const executablePath = getBrowserExecutablePath(browserType, browsersPath);
-
+                const browsersPath = join(__dirname, '..', 'browsers');
+                
+                // Add better error handling for browser executable
+                let executablePath;
+                try {
+                    executablePath = getBrowserExecutablePath(browserType, browsersPath);
+                } catch (error) {
+                    console.error(`Browser path error: ${error.message}`);
+                    // Try to install missing browser
+                    await installBrowser(browserType);
+                    executablePath = getBrowserExecutablePath(browserType, browsersPath);
+                }
+    
                 console.log(`Launching browser from: ${executablePath}`);
 
                 const browser = await playwright[browserType].launch({

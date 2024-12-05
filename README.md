@@ -86,17 +86,17 @@ If browsers are not installed correctly:
 
 1.  Clean the installation:
 
-```
-bashrm -rf ~/.cache/ms-playwright
+```bash
+rm -rf ~/.cache/ms-playwright
 # or for Windows:
-# rmdir /s /q %USERPROFILE%\AppData\Local\ms-playwright
+rmdir /s /q %USERPROFILE%\AppData\Local\ms-playwright
 
 ```
 
 1.  Rebuild the package:
 
-```
-bashpnpm rebuild n8n-nodes-playwright
+```bash
+pnpm rebuild n8n-nodes-playwright
 
 ```
 

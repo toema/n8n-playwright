@@ -1,14 +1,8 @@
-// nodes/scripts/setup-browsers.ts
 import { mkdirSync, existsSync, readdirSync, cpSync, rmSync } from 'fs';
 import { join } from 'path';
 import { execSync } from 'child_process';
 import { platform } from 'os';
-
-const browserVersions = {
-    chromium: '1140',
-    firefox: '1465',
-    webkit: '2083'
-};
+import { BrowserType, browserVersions, matchBrowserVersion } from '../playwright/config';
 
 async function setupBrowsers() {
     try {
@@ -72,19 +66,29 @@ async function setupBrowsers() {
         console.log('Installed browsers:', installedFiles);
 
         // 8. Verify each browser executable
-        for (const browserType of ['chromium', 'firefox', 'webkit']) {
-            const version = browserVersions[browserType as keyof typeof browserVersions];
-            const browserDir = installedFiles.find(f => f.startsWith(`${browserType}-${version}`));
+        const browsers: BrowserType[] = ['chromium', 'firefox', 'webkit'];
+        for (const browserType of browsers) {
+            // Find any matching browser installation
+            const browserDir = installedFiles.find(f => matchBrowserVersion(f, browserType));
             
             if (browserDir) {
                 console.log(`\nFound ${browserType} installation: ${browserDir}`);
                 
-                // Log the contents of the browser directory
+                // Verify browser executable
                 const browserPath = join(browsersPath, browserDir);
-                const browserContents = readdirSync(browserPath, { recursive: true });
-                console.log(`Contents: ${browserContents}`);
+                if (existsSync(browserPath)) {
+                    const browserContents = readdirSync(browserPath);
+                    console.log(`Contents: ${browserContents}`);
+                    
+                    // Update config to use found version
+                    updateBrowserVersion(browserType, browserDir);
+                } else {
+                    console.error(`Warning: ${browserType} installation directory exists but is empty!`);
+                }
             } else {
-                console.error(`Warning: ${browserType} installation not found!`);
+                console.log(`\nInstalling ${browserType}...`);
+                // Trigger specific browser installation
+                await installBrowser(browserType);
             }
         }
 
@@ -92,6 +96,22 @@ async function setupBrowsers() {
     } catch (error) {
         console.error('\nError during browser setup:', error);
         process.exit(1);
+    }
+}
+
+export async function installBrowser(browserType: BrowserType) {
+    try {
+        console.log(`Installing ${browserType}...`);
+        execSync(`npx playwright install ${browserType}`, { stdio: 'inherit' });
+    } catch (error) {
+        console.error(`Failed to install ${browserType}:`, error);
+    }
+}
+
+function updateBrowserVersion(browserType: BrowserType, folderName: string) {
+    const version = folderName.split('-')[1];
+    if (version) {
+        browserVersions[browserType] = version;
     }
 }
 

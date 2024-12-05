@@ -1,10 +1,23 @@
+// nodes/playwright/types.ts
+
 export interface IBrowserOptions {
     headless?: boolean;
     slowMo?: number;
 }
 
+
 export interface BrowserPaths {
-    [key: string]: {
+    chromium: {
+        windows: string[];
+        linux: string[];
+        darwin: string[];
+    };
+    firefox: {
+        windows: string[];
+        linux: string[];
+        darwin: string[];
+    };
+    webkit: {
         windows: string[];
         linux: string[];
         darwin: string[];
