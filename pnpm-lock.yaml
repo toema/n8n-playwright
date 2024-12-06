@@ -11,9 +11,6 @@ importers:
       fs-extra:
         specifier: ^11.2.0
         version: 11.2.0
-      n8n-nodes-playwright:
-        specifier: file:n8n-nodes-playwright-0.1.1.tgz
-        version: file:n8n-nodes-playwright-0.1.1.tgz(n8n-workflow@1.48.0)
       playwright:
         specifier: ^1.49.0
         version: 1.49.0
@@ -1376,13 +1373,6 @@ packages:
   mute-stdout@1.0.1:
     resolution: {integrity: sha512-kDcwXR4PS7caBpuRYYBUz9iVixUk3anO3f5OYFiIPwK/20vCzKCHyKoulbiDY1S53zD2bxUpxN/IJ+TnXjfvxg==}
     engines: {node: '>= 0.10'}
-
-  n8n-nodes-playwright@file:n8n-nodes-playwright-0.1.1.tgz:
-    resolution: {integrity: sha512-yvWLjc04bj5b37tcGkVyCvSt3LyOtI5VqonmzhYsd5TydTB5dsa9DaazwUB/7VJB0L8L68OvtAAckOWvG9U/1Q==, tarball: file:n8n-nodes-playwright-0.1.1.tgz}
-    version: 0.1.1
-    engines: {node: '>=18.10', pnpm: '>=9.1'}
-    peerDependencies:
-      n8n-workflow: '*'
 
   n8n-workflow@1.48.0:
     resolution: {integrity: sha512-zHeOHhlf7BB2+DeAcm81+sJfmss8u/TE3KLpc/vCRc1vPonvF0iN5X5/DskHTGKPyXrP6N7wR6bkGWEXN7w08A==}
@@ -3659,12 +3649,6 @@ snapshots:
   ms@2.1.2: {}
 
   mute-stdout@1.0.1: {}
-
-  n8n-nodes-playwright@file:n8n-nodes-playwright-0.1.1.tgz(n8n-workflow@1.48.0):
-    dependencies:
-      fs-extra: 11.2.0
-      n8n-workflow: 1.48.0
-      playwright: 1.49.0
 
   n8n-workflow@1.48.0:
     dependencies:
