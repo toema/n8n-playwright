@@ -20,7 +20,7 @@
     "pnpm": ">=9.1"
   },
   "packageManager": "pnpm@9.1.4",
-  "main": "index.js",
+  "main": "dist/nodes/index.js",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "postinstall": "node dist/nodes/scripts/setup-browsers.js",
@@ -33,8 +33,8 @@
     "format": "prettier nodes package.json --write",
     "lint": "eslint nodes package.json",
     "lintfix": "eslint nodes package.json --fix",
-    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes  package.json",
-    "publish": "npm publish --access public"
+    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes  package.json &&",
+    "publish": "npm version patch && npm publish --access public"
   },
   "files": [
     "dist",
