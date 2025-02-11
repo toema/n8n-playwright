@@ -5,9 +5,13 @@ This is an n8n community node. It lets you automate browser actions using Playwr
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
 [Installation](#installation)
+
 [Operations](#operations)
+
 [Compatibility](#compatibility)
+
 [Resources](#resources)
+
 [Version history](#version-history)
 
 ## Installation
