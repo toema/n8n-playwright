@@ -34,7 +34,7 @@
     "lint": "eslint nodes package.json",
     "lintfix": "eslint nodes package.json --fix",
     "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes  package.json &&",
-    "publish": "npm version patch && npm publish --access public"
+    "publish": "pnpm version patch && pnpm publish --access public"
   },
   "files": [
     "dist",
