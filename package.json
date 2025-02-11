@@ -33,7 +33,8 @@
     "format": "prettier nodes package.json --write",
     "lint": "eslint nodes package.json",
     "lintfix": "eslint nodes package.json --fix",
-    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes  package.json"
+    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes  package.json",
+    "publish": "npm publish --access public"
   },
   "files": [
     "dist",
@@ -42,7 +43,7 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "nodes": [
-      "dist/nodes/Playwright/PlaywrightNode.node.js"
+      "dist/nodes/Playwright/Playwright.node.js"
     ]
   },
   "devDependencies": {
