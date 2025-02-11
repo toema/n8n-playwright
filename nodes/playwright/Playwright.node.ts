@@ -7,7 +7,7 @@ import { IBrowserOptions } from './types';
 import { installBrowser } from '../scripts/setup-browsers';
 import { BrowserType } from './config';
 
-export class PlaywrightNode implements INodeType {
+export class Playwright implements INodeType {
     description : INodeTypeDescription = {
     displayName: 'Playwright',
     name: 'playwright',
@@ -179,7 +179,7 @@ export class PlaywrightNode implements INodeType {
     async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
         const items = this.getInputData();
         const returnData: INodeExecutionData[] = [];
-        
+
         for (let i = 0; i < items.length; i++) {
             const operation = this.getNodeParameter('operation', i) as string;
             const url = this.getNodeParameter('url', i) as string;
@@ -189,7 +189,7 @@ export class PlaywrightNode implements INodeType {
             try {
                 const playwright = require('playwright');
                 const browsersPath = join(__dirname, '..', 'browsers');
-                
+
                 // Add better error handling for browser executable
                 let executablePath;
                 try {
@@ -200,7 +200,7 @@ export class PlaywrightNode implements INodeType {
                     await installBrowser(browserType);
                     executablePath = getBrowserExecutablePath(browserType, browsersPath);
                 }
-    
+
                 console.log(`Launching browser from: ${executablePath}`);
 
                 const browser = await playwright[browserType].launch({

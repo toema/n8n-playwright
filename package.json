@@ -33,7 +33,7 @@
     "format": "prettier nodes package.json --write",
     "lint": "eslint nodes package.json",
     "lintfix": "eslint nodes package.json --fix",
-    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes  package.json && npm version patch",
+    "prepublish": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes  package.json && npm version patch",
     "publish": "npm publish --access public"
   },
   "files": [
