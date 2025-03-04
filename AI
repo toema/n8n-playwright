@@ -35,6 +35,9 @@ find . -type f \
     -not -name '.*' \
     -not -path './ai_files/*' \
     -not -path './pnpm-lock.yaml' \
+    -not -path './*.txt' \
+    -not -path './*.md' \
+    -not -path './*.svg' \
     -not -path './package-lock.json' \
     -not -path './nodes/browsers/*' \
     -not -path './dist/nodes/browsers/*' \

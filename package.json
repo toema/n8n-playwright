@@ -34,7 +34,7 @@
     "lint": "eslint nodes package.json",
     "lintfix": "eslint nodes package.json --fix",
     "prepublish": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes  package.json && npm version patch",
-    "publish": "npm publish --access public"
+    "publish": "npm version patch && npm publish --access public"
   },
   "files": [
     "dist",
@@ -43,7 +43,7 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "nodes": [
-      "dist/nodes/Playwright/Playwright.node.js"
+      "dist/nodes/playwright/Playwright.node.js"
     ]
   },
   "devDependencies": {
