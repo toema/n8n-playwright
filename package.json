@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-playwright",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "n8n-community-node-package for browser automation using Playwright",
   "keywords": [
     "n8n-community-node-package"
@@ -44,7 +44,7 @@
     "n8nNodesApiVersion": 1,
     "nodes": [
       "dist/nodes/playwright/Playwright.node.js"
-        ]
+    ]
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
