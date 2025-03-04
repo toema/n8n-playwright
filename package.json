@@ -43,8 +43,8 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "nodes": [
-      "dist/nodes/Playwright/Playwright.node.js"
-    ]
+      "dist/nodes/playwright/Playwright.node.js"
+        ]
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",

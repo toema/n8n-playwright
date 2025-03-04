@@ -11,3 +11,5 @@ ai_files
 nodes/browsers/*
 .vscode
 *.tgz
+.devcontainer
+ai_files
