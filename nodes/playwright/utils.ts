@@ -1,15 +1,14 @@
-// nodes/playwright/utils.ts
 import { join } from 'path';
-import { BrowserType, browserPaths, matchBrowserVersion } from './config';
+import { BrowserType, browserPaths } from './config';
 import { platform } from 'os';
 import { readdirSync } from 'fs';
 
 export function getBrowserExecutablePath(browserType: BrowserType, basePath: string): string {
     const os = platform();
     const files = readdirSync(basePath);
-    
-    // Find matching browser installation
-    const browserDir = files.find(f => matchBrowserVersion(f, browserType));
+
+    // Find any directory that starts with the browser type
+    const browserDir = files.find(f => f.startsWith(browserType));
     if (!browserDir) {
         throw new Error(`Browser ${browserType} not found in ${basePath}`);
     }
@@ -29,7 +28,5 @@ export function getBrowserExecutablePath(browserType: BrowserType, basePath: str
             throw new Error(`Unsupported operating system: ${os}`);
     }
 
-    // Replace version-specific folder with found folder
-    pathSegments[0] = browserDir;
-    return join(basePath, ...pathSegments);
+    return join(basePath, browserDir, ...pathSegments);
 }
