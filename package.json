@@ -23,9 +23,9 @@
   "main": "dist/nodes/index.js",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "postinstall": "node dist/nodes/scripts/setup-browsers.js",
+    "postinstall": "npm config set yes true && node dist/nodes/scripts/setup-browsers.js && npm config set yes false",
     "rebuild": "node dist/nodes/scripts/setup-browsers.js",
-    "setup": "node dist/nodes/scripts/setup-browsers.js",
+    "setup": "npm config set yes true && node dist/nodes/scripts/setup-browsers.js && npm config set yes false",
     "test:setup": "ts-node scripts/test-setup.ts",
     "setup:clean": "rm -rf dist/nodes/browsers && pnpm setup",
     "build": "tsc && gulp build:icons",
