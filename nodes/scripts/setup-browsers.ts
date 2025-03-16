@@ -39,9 +39,9 @@ async function setupBrowsers() {
         const files = readdirSync(sourcePath);
 
         for (const file of files) {
-            if (file.startsWith('chromium-') ||
-                file.startsWith('firefox-') ||
-                file.startsWith('webkit-')) {
+            if (file.startsWith('chromium') ||
+                file.startsWith('firefox') ||
+                file.startsWith('webkit')) {
 
                 const sourceFull = join(sourcePath, file);
                 const destFull = join(browsersPath, file);

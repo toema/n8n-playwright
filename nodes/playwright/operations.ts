@@ -9,7 +9,7 @@ export async function handleOperation(
 ): Promise<any> {
     switch (operation) {
         case 'navigate':
-            return { url: page.url() };
+            return { url: page.content() };
 
         case 'takeScreenshot':
             const screenshotOptions = executeFunctions.getNodeParameter('screenshotOptions', itemIndex) as object;
