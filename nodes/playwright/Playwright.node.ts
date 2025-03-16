@@ -1,4 +1,4 @@
-import { INodeType, INodeExecutionData, IExecuteFunctions,INodeTypeDescription, NodeConnectionType, INodeInputConfiguration, INodeOutputConfiguration } from 'n8n-workflow';
+import { INodeType, INodeExecutionData, IExecuteFunctions,INodeTypeDescription  } from 'n8n-workflow';
 import { join } from 'path';
 import { platform } from 'os';
 import { getBrowserExecutablePath } from './utils';
@@ -19,19 +19,8 @@ export class Playwright implements INodeType {
     defaults: {
         name: 'Playwright',
     },
-    inputs: [
-        {
-            displayName: 'Input',
-            type: NodeConnectionType.Main,
-            required: true,
-        } as INodeInputConfiguration,
-    ],
-    outputs: [
-        {
-            displayName: 'Output',
-            type: NodeConnectionType.Main,
-        } as INodeOutputConfiguration,
-    ],
+    inputs: ['main'],
+    outputs: ['main'],
     properties: [
         {
             displayName: 'Operation',

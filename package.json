@@ -64,6 +64,6 @@
   },
   "dependencies": {
     "fs-extra": "^11.2.0",
-    "playwright": "^1.49.0"
+    "playwright": "1.49.0"
   }
 }
