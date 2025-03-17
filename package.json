@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-playwright",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "n8n-community-node-package for browser automation using Playwright",
   "keywords": [
     "n8n-community-node-package"
