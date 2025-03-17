@@ -16,7 +16,7 @@ export const browserPaths: BrowserPaths = {
     },
     'webkit': {
         windows: ['Playwright.exe'],
-        linux: ['playwright-webkit'],
+				linux: ['minibrowser-gtk', 'MiniBrowser'],
         darwin: ['Playwright']
     }
 };
