@@ -33,9 +33,7 @@ export class Playwright implements INodeType {
             type: NodeConnectionType.Main,
         } as INodeOutputConfiguration,
     ],
-		options: {
-			maxDataSize: -1 // Removes size limit
-		},
+
     properties: [
         {
             displayName: 'Operation',
