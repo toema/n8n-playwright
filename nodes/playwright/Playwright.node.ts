@@ -226,7 +226,7 @@ export class Playwright implements INodeType {
                 const page = await context.newPage();
                 await page.goto(url);
 
-                const result = await handleOperation(operation, page, this, i);
+								const result = await handleOperation(operation, page, null, this, i);
 
                 await browser.close();
 
