@@ -1,15 +1,16 @@
 import { IExecuteFunctions } from 'n8n-workflow';
-import {  Page } from 'playwright';
+import {  Page, Request } from 'playwright';
 
 export async function handleOperation(
     operation: string,
     page: Page,
+		request:Request,
     executeFunctions: IExecuteFunctions,
     itemIndex: number
 ): Promise<any> {
     switch (operation) {
         case 'navigate':
-            return { url: page.url(), title:page.title() };
+            return { content: page.content(), url:page.url(), Headers: request.headers() };
 
         case 'takeScreenshot':
             const screenshotOptions = executeFunctions.getNodeParameter('screenshotOptions', itemIndex) as object;
