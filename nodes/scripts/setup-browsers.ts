@@ -1,4 +1,4 @@
-import { mkdirSync, existsSync, readdirSync, cpSync, rmSync } from 'fs';
+import { mkdirSync, existsSync, readdirSync, rmSync } from 'fs';
 import { join } from 'path';
 import { execSync } from 'child_process';
 import { platform } from 'os';
@@ -24,39 +24,40 @@ async function setupBrowsers() {
         console.log('Source path:', sourcePath);
         console.log('Destination path:', browsersPath);
 
-			  // 3. Check if source exists
+				// 3. Clean destination if it exists
+        if (existsSync(browsersPath)) {
+					console.log('\nCleaning existing browsers directory...');
+					rmSync(browsersPath, { recursive: true, force: true });
+			}
+
+			 // 4. Create fresh browsers directory
+			 console.log('Creating browsers directory...');
+			 mkdirSync(browsersPath, { recursive: true });
+
+			  // 5. Check if source exists
         if (!existsSync(sourcePath)) {
             console.log('\nInstalling Playwright browsers...');
-            execSync('npx --yes playwright install', { stdio: 'inherit' });
+            execSync(`PLAYWRIGHT_BROWSERS_PATH=${browsersPath} npx --yes playwright install`, { stdio: 'inherit' });
         }
 
-        // 4. Clean destination if it exists
-        if (existsSync(browsersPath)) {
-            console.log('\nCleaning existing browsers directory...');
-            rmSync(browsersPath, { recursive: true, force: true });
-        }
 
-        // 5. Create fresh browsers directory
-        console.log('Creating browsers directory...');
-        mkdirSync(browsersPath, { recursive: true });
+        // // 6. Copy browser files with detailed logging
+        // console.log('\nCopying browser files...');
+        // const files = readdirSync(sourcePath);
 
-        // 6. Copy browser files with detailed logging
-        console.log('\nCopying browser files...');
-        const files = readdirSync(sourcePath);
+        // for (const file of files) {
+        //     // Only copy browser directories we need
+        //     if (file.startsWith('chromium') ||
+        //         file.startsWith('firefox') ||
+        //         file.startsWith('webkit')) {
 
-        for (const file of files) {
-            // Only copy browser directories we need
-            if (file.startsWith('chromium') ||
-                file.startsWith('firefox') ||
-                file.startsWith('webkit')) {
+        //         const sourceFull = join(sourcePath, file);
+        //         const destFull = join(browsersPath, file);
 
-                const sourceFull = join(sourcePath, file);
-                const destFull = join(browsersPath, file);
-
-                console.log(`Copying ${file}...`);
-                cpSync(sourceFull, destFull, { recursive: true });
-            }
-        }
+        //         console.log(`Copying ${file}...`);
+        //         cpSync(sourceFull, destFull, { recursive: true });
+        //     }
+        // }
 
         // 7. Verify installation
         console.log('\nVerifying installation...');
@@ -84,7 +85,7 @@ async function setupBrowsers() {
 export async function installBrowser(browserType: BrowserType) {
     try {
         console.log(`Installing ${browserType}...`);
-        execSync(`npx --yes playwright install ${browserType}`, { stdio: 'inherit' });
+        execSync(`PLAYWRIGHT_BROWSERS_PATH=~/.n8n/nodes/node_modules/n8n-nodes-playwright/dist/nodes/browsers npx --yes playwright install ${browserType}`, { stdio: 'inherit' });
     } catch (error) {
         console.error(`Failed to install ${browserType}:`, error);
     }
