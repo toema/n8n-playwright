@@ -24,7 +24,6 @@ export class Playwright implements INodeType {
         {
             displayName: 'Input',
             type: NodeConnectionType.Main,
-            required: true,
         } as INodeInputConfiguration,
     ],
     // eslint-disable-next-line n8n-nodes-base/node-class-description-outputs-wrong
@@ -34,6 +33,9 @@ export class Playwright implements INodeType {
             type: NodeConnectionType.Main,
         } as INodeOutputConfiguration,
     ],
+		options: {
+			maxDataSize: -1 // Removes size limit
+		},
     properties: [
         {
             displayName: 'Operation',

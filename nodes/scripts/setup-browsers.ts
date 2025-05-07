@@ -12,6 +12,7 @@ async function setupBrowsers() {
         console.log('Node version:', process.version);
 
 				// 2. Determine paths
+				// supports windows and linux only for the meantime
         const os = platform();
         const sourcePath = os === 'win32'
             ? join(process.env.USERPROFILE || '', 'AppData', 'Local', 'ms-playwright')
