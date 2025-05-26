@@ -1,4 +1,3 @@
-// nodes/playwright/types.ts
 
 export interface IBrowserOptions {
     headless?: boolean;
