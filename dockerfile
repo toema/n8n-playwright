@@ -41,9 +41,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libwayland-egl1 \
     libwayland-server0 \
     libx11-6 \
+    libdbus-glib-1-2 \
+		libxt6 \
     libxcb1 \
     libxext6 \
     libxfixes3 \
+    libpci3 \
+		libasound2 \
     libxi6 \
     libxkbcommon0 \
     libxrandr2 \
