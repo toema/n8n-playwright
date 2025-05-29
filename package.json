@@ -27,7 +27,6 @@
     "rebuild": "node dist/nodes/scripts/setup-browsers.js",
     "setup": "npm config set yes true && node dist/nodes/scripts/setup-browsers.js ",
     "test:setup": "ts-node scripts/test-setup.ts",
-    "setup:clean": "rm -rf dist/nodes/browsers && pnpm setup",
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
     "format": "prettier nodes package.json --write",
