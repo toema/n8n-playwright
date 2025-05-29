@@ -74,6 +74,7 @@ export class Playwright implements INodeType {
             ],
             default: 'navigate',
         },
+
         {
             displayName: 'URL',
             name: 'url',
@@ -88,6 +89,19 @@ export class Playwright implements INodeType {
             },
             required: true,
         },
+				{
+    displayName: 'Property Name',
+    name: 'dataPropertyName',
+    type: 'string',
+    required: true,
+    default: 'screenshot',
+    description: 'Name of the binary property in which to store the screenshot data',
+    displayOptions: {
+        show: {
+            operation: ['takeScreenshot'],
+        },
+    },
+},
         {
             displayName: 'Selector',
             name: 'selector',
@@ -227,10 +241,10 @@ export class Playwright implements INodeType {
                 await page.goto(url);
 
 								const result = await handleOperation(operation, page, this, i);
-
+								// console.log(`Operation result:`, result);
                 await browser.close();
 
-                returnData.push({ json: result });
+                returnData.push(result );
             } catch (error) {
                 console.error(`Browser launch error:`, error);
                 if (this.continueOnFail()) {

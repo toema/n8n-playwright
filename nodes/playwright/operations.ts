@@ -9,12 +9,34 @@ export async function handleOperation(
 ): Promise<any> {
     switch (operation) {
         case 'navigate':
-            return { content: page.content(), url:page.url() };
+					 const content = await page.content();
+            const url = page.url();
+            return { content: content, url:url };
 
         case 'takeScreenshot':
-            const screenshotOptions = executeFunctions.getNodeParameter('screenshotOptions', itemIndex) as object;
-            const screenshot = await page.screenshot(screenshotOptions);
-            return { screenshot: screenshot.toString('base64') };
+           const screenshotOptions = executeFunctions.getNodeParameter('screenshotOptions', itemIndex);
+    const dataPropertyName = executeFunctions.getNodeParameter('dataPropertyName', itemIndex) || 'screenshot';
+    const screenshot = await page.screenshot(screenshotOptions as any);
+
+    // Prepare binary data using n8n's helper
+    const binaryData = await executeFunctions.helpers.prepareBinaryData(
+        Buffer.from(screenshot),
+        (screenshotOptions as { path?: string }).path || dataPropertyName,
+        'image/png'
+    );
+
+    return {
+        binary: {
+            [dataPropertyName]: binaryData
+        },
+        json: {
+            success: true,
+            url: page.url()
+        },
+        pairedItem: {
+            item: itemIndex
+        }
+    };
 
         case 'getText':
             const selector = executeFunctions.getNodeParameter('selector', itemIndex) as string;

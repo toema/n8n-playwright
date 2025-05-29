@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-playwright",
-  "version": "0.2.11",
+  "version": "0.2.16",
   "description": "n8n-community-node-package for browser automation using Playwright",
   "keywords": [
     "n8n-community-node-package"
@@ -27,7 +27,6 @@
     "rebuild": "node dist/nodes/scripts/setup-browsers.js",
     "setup": "npm config set yes true && node dist/nodes/scripts/setup-browsers.js ",
     "test:setup": "ts-node scripts/test-setup.ts",
-    "setup:clean": "rm -rf dist/nodes/browsers && pnpm setup",
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
     "format": "prettier nodes package.json --write",
