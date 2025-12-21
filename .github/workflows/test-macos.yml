@@ -1,0 +1,261 @@
+# Quick macOS test you can run from any system
+
+name: Test on macOS
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+jobs:
+  test-macos:
+    name: Full macOS Test Suite
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Display macOS Info
+        run: |
+          echo "=== macOS System Information ==="
+          sw_vers
+          echo ""
+          echo "Node version: $(node --version)"
+          echo "npm version: $(npm --version)"
+          echo "HOME: $HOME"
+          echo "Expected Playwright cache: $HOME/Library/Caches/ms-playwright"
+          echo ""
+
+      - name: Install pnpm
+        run: npm install -g pnpm@9.1.4
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Check if Playwright cache exists (before)
+        run: |
+          echo "=== Checking Playwright Cache (Before Installation) ==="
+          if [ -d "$HOME/Library/Caches/ms-playwright" ]; then
+            echo "✅ Cache directory exists"
+            ls -la "$HOME/Library/Caches/ms-playwright"
+          else
+            echo "⚠️  Cache directory does not exist yet"
+          fi
+
+      - name: Run browser setup script
+        run: |
+          echo "=== Running Browser Setup ==="
+          node dist/nodes/scripts/setup-browsers.js
+
+      - name: Verify Playwright cache (after)
+        run: |
+          echo "=== Verifying Playwright Cache (After Installation) ==="
+          CACHE_PATH="$HOME/Library/Caches/ms-playwright"
+
+          if [ -d "$CACHE_PATH" ]; then
+            echo "✅ Cache directory exists at: $CACHE_PATH"
+            echo ""
+            echo "Contents:"
+            ls -la "$CACHE_PATH"
+            echo ""
+
+            # Check each browser
+            for browser in chromium firefox webkit; do
+              echo "Checking $browser..."
+              BROWSER_DIR=$(ls -d "$CACHE_PATH/$browser-"* 2>/dev/null | head -n 1)
+              if [ -n "$BROWSER_DIR" ]; then
+                echo "  ✅ Found: $BROWSER_DIR"
+                echo "  Contents:"
+                ls -la "$BROWSER_DIR" | head -n 10
+              else
+                echo "  ❌ Not found"
+              fi
+              echo ""
+            done
+          else
+            echo "❌ Cache directory not found!"
+            exit 1
+          fi
+
+      - name: Verify browsers copied to package
+        run: |
+          echo "=== Verifying Browsers in Package ==="
+          BROWSERS_PATH="dist/nodes/browsers"
+
+          if [ -d "$BROWSERS_PATH" ]; then
+            echo "✅ Browsers directory exists"
+            echo ""
+            echo "Contents:"
+            ls -la "$BROWSERS_PATH"
+            echo ""
+          else
+            echo "❌ Browsers directory not found!"
+            exit 1
+          fi
+
+      - name: Test Chromium executable path (macOS specific)
+        run: |
+          echo "=== Testing Chromium Executable Path ==="
+          BROWSERS_PATH="dist/nodes/browsers"
+
+          # Find chromium directory
+          CHROMIUM_DIR=$(ls -d "$BROWSERS_PATH/chromium-"* 2>/dev/null | head -n 1)
+
+          if [ -n "$CHROMIUM_DIR" ]; then
+            echo "Chromium directory: $CHROMIUM_DIR"
+            echo ""
+
+            # Check for the CORRECT path (Chromium.app)
+            CHROMIUM_APP="$CHROMIUM_DIR/chrome-mac/Chromium.app"
+            CHROMIUM_EXEC="$CHROMIUM_APP/Contents/MacOS/Chromium"
+
+            echo "Checking for: $CHROMIUM_EXEC"
+            if [ -f "$CHROMIUM_EXEC" ]; then
+              echo "✅ Chromium executable found at correct location!"
+              ls -lh "$CHROMIUM_EXEC"
+            else
+              echo "❌ Chromium executable not found!"
+              echo ""
+              echo "Directory structure:"
+              find "$CHROMIUM_DIR" -maxdepth 3 -type d
+              echo ""
+              echo "Looking for executables:"
+              find "$CHROMIUM_DIR" -name "Chromium" -o -name "Chrome"
+              exit 1
+            fi
+          else
+            echo "❌ Chromium directory not found!"
+            exit 1
+          fi
+
+      - name: Test Firefox executable path (macOS specific)
+        run: |
+          echo "=== Testing Firefox Executable Path ==="
+          BROWSERS_PATH="dist/nodes/browsers"
+
+          FIREFOX_DIR=$(ls -d "$BROWSERS_PATH/firefox-"* 2>/dev/null | head -n 1)
+
+          if [ -n "$FIREFOX_DIR" ]; then
+            echo "Firefox directory: $FIREFOX_DIR"
+
+            FIREFOX_APP="$FIREFOX_DIR/firefox/Firefox.app"
+            FIREFOX_EXEC="$FIREFOX_APP/Contents/MacOS/firefox"
+
+            echo "Checking for: $FIREFOX_EXEC"
+            if [ -f "$FIREFOX_EXEC" ]; then
+              echo "✅ Firefox executable found!"
+              ls -lh "$FIREFOX_EXEC"
+            else
+              echo "❌ Firefox executable not found!"
+              find "$FIREFOX_DIR" -name "firefox" -o -name "Firefox"
+              exit 1
+            fi
+          fi
+
+      - name: Test WebKit executable path (macOS specific)
+        run: |
+          echo "=== Testing WebKit Executable Path ==="
+          BROWSERS_PATH="dist/nodes/browsers"
+
+          WEBKIT_DIR=$(ls -d "$BROWSERS_PATH/webkit-"* 2>/dev/null | head -n 1)
+
+          if [ -n "$WEBKIT_DIR" ]; then
+            echo "WebKit directory: $WEBKIT_DIR"
+
+            WEBKIT_APP="$WEBKIT_DIR/Playwright.app"
+            WEBKIT_EXEC="$WEBKIT_APP/Contents/MacOS/Playwright"
+
+            echo "Checking for: $WEBKIT_EXEC"
+            if [ -f "$WEBKIT_EXEC" ]; then
+              echo "✅ WebKit executable found!"
+              ls -lh "$WEBKIT_EXEC"
+            else
+              echo "❌ WebKit executable not found!"
+              find "$WEBKIT_DIR" -name "Playwright"
+              exit 1
+            fi
+          fi
+
+      - name: Test browser launch (actual execution)
+        run: |
+          echo "=== Testing Actual Browser Launch ==="
+
+          # Create a simple test script
+          cat > test-launch.js << 'EOF'
+          const { chromium } = require('playwright');
+          const { join } = require('path');
+          const { readdirSync } = require('fs');
+
+          async function test() {
+              try {
+                  const browsersPath = join(__dirname, 'dist', 'nodes', 'browsers');
+                  const files = readdirSync(browsersPath);
+                  const chromiumDir = files.find(f => f.startsWith('chromium-'));
+
+                  const executablePath = join(
+                      browsersPath,
+                      chromiumDir,
+                      'chrome-mac',
+                      'Chromium.app',
+                      'Contents',
+                      'MacOS',
+                      'Chromium'
+                  );
+
+                  console.log('Launching Chromium from:', executablePath);
+
+                  const browser = await chromium.launch({
+                      executablePath,
+                      headless: true
+                  });
+
+                  const page = await browser.newPage();
+                  await page.goto('https://example.com');
+
+                  const title = await page.title();
+                  console.log('✅ Page title:', title);
+
+                  await browser.close();
+                  console.log('✅ Browser test successful!');
+              } catch (error) {
+                  console.error('❌ Browser test failed:', error.message);
+                  process.exit(1);
+              }
+          }
+
+          test();
+          EOF
+
+          node test-launch.js
+
+      - name: Create summary report
+        if: always()
+        run: |
+          echo "=== macOS Test Summary ==="
+          echo ""
+          echo "✅ Tests Completed"
+          echo ""
+          echo "Key Findings:"
+          echo "1. Cache path: $HOME/Library/Caches/ms-playwright"
+          echo "2. Chromium executable: chrome-mac/Chromium.app/Contents/MacOS/Chromium"
+          echo "3. Firefox executable: firefox/Firefox.app/Contents/MacOS/firefox"
+          echo "4. WebKit executable: Playwright.app/Contents/MacOS/Playwright"
+          echo ""
+          echo "All paths are macOS-specific and use the .app bundle structure."
+
+      - name: Upload browsers directory as artifact
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-browsers
+          path: dist/nodes/browsers/
+          retention-days: 5
