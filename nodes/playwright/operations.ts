@@ -9,9 +9,17 @@ export async function handleOperation(
 ): Promise<any> {
     switch (operation) {
         case 'navigate':
-					 const content = await page.content();
-            const url = page.url();
-            return { content: content, url:url };
+    const content = await page.content();
+    const url = page.url();
+    return {
+        json: {
+            content: content,
+            url: url
+        },
+        pairedItem: {
+            item: itemIndex
+        }
+    };
 
         case 'takeScreenshot':
            const screenshotOptions = executeFunctions.getNodeParameter('screenshotOptions', itemIndex);
@@ -39,21 +47,30 @@ export async function handleOperation(
     };
 
         case 'getText':
-            const selector = executeFunctions.getNodeParameter('selector', itemIndex) as string;
-            const element = await page.$(selector);
-            const text = await element?.textContent();
-            return { text };
+    const selector = executeFunctions.getNodeParameter('selector', itemIndex) as string;
+    const element = await page.$(selector);
+    const text = await element?.textContent();
+    return {
+        json: { text },
+        pairedItem: { item: itemIndex }
+    };
 
-        case 'clickElement':
-            const clickSelector = executeFunctions.getNodeParameter('selector', itemIndex) as string;
-            await page.click(clickSelector);
-            return { success: true };
+case 'clickElement':
+    const clickSelector = executeFunctions.getNodeParameter('selector', itemIndex) as string;
+    await page.click(clickSelector);
+    return {
+        json: { success: true },
+        pairedItem: { item: itemIndex }
+    };
 
-        case 'fillForm':
-            const formSelector = executeFunctions.getNodeParameter('selector', itemIndex) as string;
-            const value = executeFunctions.getNodeParameter('value', itemIndex) as string;
-            await page.fill(formSelector, value);
-            return { success: true };
+case 'fillForm':
+    const formSelector = executeFunctions.getNodeParameter('selector', itemIndex) as string;
+    const value = executeFunctions.getNodeParameter('value', itemIndex) as string;
+    await page.fill(formSelector, value);
+    return {
+        json: { success: true },
+        pairedItem: { item: itemIndex }
+    };
 
         default:
             throw new Error(`Unknown operation: ${operation}`);

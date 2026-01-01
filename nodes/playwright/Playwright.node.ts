@@ -240,11 +240,11 @@ export class Playwright implements INodeType {
                 const page = await context.newPage();
                 await page.goto(url);
 
-								const result = await handleOperation(operation, page, this, i);
-								// console.log(`Operation result:`, result);
+                const result = await handleOperation(operation, page, this, i);
+                console.log(`Operation result:`, result);
                 await browser.close();
 
-                returnData.push(result );
+                returnData.push(result);
             } catch (error) {
                 console.error(`Browser launch error:`, error);
                 if (this.continueOnFail()) {
