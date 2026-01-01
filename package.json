@@ -22,7 +22,6 @@
   "packageManager": "pnpm@9.1.4",
   "main": "dist/nodes/index.js",
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
     "postinstall": "npm config set yes true && node dist/nodes/scripts/setup-browsers.js",
     "rebuild": "node dist/nodes/scripts/setup-browsers.js",
     "setup": "npm config set yes true && node dist/nodes/scripts/setup-browsers.js ",
