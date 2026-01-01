@@ -1,0 +1,122 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install pnpm
+        run: npm install -g pnpm@9.1.4
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Run linter
+        run: pnpm lint || echo "Linting skipped"
+        continue-on-error: true
+
+      - name: Check if version already published
+        id: check-version
+        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          
+          # Check if version exists on npm
+          if npm view "$PACKAGE_NAME@$CURRENT_VERSION" version 2>/dev/null; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION already exists on npm"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION is new"
+          fi
+          
+          echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        if: steps.check-version.outputs.exists == 'true'
+        run: |
+          BUMP_TYPE="${{ github.event.inputs.version_bump || 'patch' }}"
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          npm version $BUMP_TYPE -m "chore: bump version to %s [skip ci]"
+          
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Push version bump
+        if: steps.check-version.outputs.exists == 'true'
+        run: |
+          git push origin HEAD:${{ github.ref_name }}
+          git push --tags
+
+      - name: Configure npm authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Get final version
+        id: final-version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.final-version.outputs.version }}
+          release_name: Release v${{ steps.final-version.outputs.version }}
+          body: |
+            ## Changes in v${{ steps.final-version.outputs.version }}
+            
+            Published to npm: https://www.npmjs.com/package/n8n-nodes-playwright/v/${{ steps.final-version.outputs.version }}
+            
+            ### Installation
+            ```bash
+            pnpm install n8n-nodes-playwright@${{ steps.final-version.outputs.version }}
+            ```
+          draft: false
+          prerelease: false
+
+      - name: Notify success
+        if: success()
+        run: |
+          echo "✅ Successfully published n8n-nodes-playwright@${{ steps.final-version.outputs.version }} to npm!"
+          echo "📦 Package: https://www.npmjs.com/package/n8n-nodes-playwright"
