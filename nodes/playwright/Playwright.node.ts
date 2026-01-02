@@ -3,6 +3,7 @@ import { join } from 'path';
 import { platform } from 'os';
 import { getBrowserExecutablePath } from './utils';
 import { handleOperation } from './operations';
+import { runCustomScript } from './customScript';
 import { IBrowserOptions } from './types';
 import { installBrowser } from '../scripts/setup-browsers';
 import { BrowserType } from './config';
@@ -19,14 +20,12 @@ export class Playwright implements INodeType {
     defaults: {
         name: 'Playwright',
     },
-    // eslint-disable-next-line n8n-nodes-base/node-class-description-inputs-wrong-regular-node
     inputs: [
         {
             displayName: 'Input',
             type: NodeConnectionType.Main,
         } as INodeInputConfiguration,
     ],
-    // eslint-disable-next-line n8n-nodes-base/node-class-description-outputs-wrong
     outputs: [
         {
             displayName: 'Output',
@@ -66,6 +65,12 @@ export class Playwright implements INodeType {
                     action: 'Navigate to a URL',
                 },
                 {
+                    name: 'Run Custom Script',
+                    value: 'runCustomScript',
+                    description: 'Execute custom JavaScript code with full Playwright API access',
+                    action: 'Run custom JavaScript code',
+                },
+                {
                     name: 'Take Screenshot',
                     value: 'takeScreenshot',
                     description: 'Take a screenshot of a webpage',
@@ -89,6 +94,62 @@ export class Playwright implements INodeType {
             },
             required: true,
         },
+
+        // Custom Script Code
+        {
+            displayName: 'Script Code',
+            name: 'scriptCode',
+            type: 'string',
+            typeOptions: {
+                editor: 'codeNodeEditor',
+                editorLanguage: 'javaScript',
+            },
+            required: true,
+            default: `// Navigate to a URL
+await $page.goto('https://example.com');
+
+// Get page title
+const title = await $page.title();
+console.log('Page title:', title);
+
+// Take a screenshot
+const screenshot = await $page.screenshot({ type: 'png' });
+
+// Return results
+return [{
+    json: { 
+        title,
+        url: $page.url()
+    },
+    binary: {
+        screenshot: await $helpers.prepareBinaryData(
+            Buffer.from(screenshot),
+            'screenshot.png',
+            'image/png'
+        )
+    }
+}];`,
+            description: 'JavaScript code to execute with Playwright. Access $page, $browser, $playwright, and all n8n Code node variables.',
+            noDataExpression: true,
+            displayOptions: {
+                show: {
+                    operation: ['runCustomScript'],
+                },
+            },
+        },
+
+        {
+            displayName: 'Use <code>$page</code>, <code>$browser</code>, or <code>$playwright</code> to access Playwright. <a target="_blank" href="https://docs.n8n.io/code-examples/methods-variables-reference/">Special vars/methods</a> are available. <br><br>Debug by using <code>console.log()</code> statements and viewing their output in the browser console.',
+            name: 'notice',
+            type: 'notice',
+            displayOptions: {
+                show: {
+                    operation: ['runCustomScript'],
+                },
+            },
+            default: '',
+        },
+
         {
             displayName: 'Property Name',
             name: 'dataPropertyName',
@@ -103,7 +164,7 @@ export class Playwright implements INodeType {
             },
         },
         
-        // Selector Type - NEW
+        // Selector Type
         {
             displayName: 'Selector Type',
             name: 'selectorType',
@@ -256,7 +317,6 @@ export class Playwright implements INodeType {
 
         for (let i = 0; i < items.length; i++) {
             const operation = this.getNodeParameter('operation', i) as string;
-            const url = this.getNodeParameter('url', i) as string;
             const browserType = this.getNodeParameter('browser', i) as BrowserType;
             const browserOptions = this.getNodeParameter('browserOptions', i) as IBrowserOptions;
 
@@ -264,13 +324,12 @@ export class Playwright implements INodeType {
                 const playwright = require('playwright');
                 const browsersPath = join(__dirname, '..', 'browsers');
 
-                // Add better error handling for browser executable
+                // Get browser executable path
                 let executablePath;
                 try {
                     executablePath = getBrowserExecutablePath(browserType, browsersPath);
                 } catch (error) {
                     console.error(`Browser path error: ${error.message}`);
-                    // Try to install missing browser
                     await installBrowser(browserType);
                     executablePath = getBrowserExecutablePath(browserType, browsersPath);
                 }
@@ -285,12 +344,24 @@ export class Playwright implements INodeType {
 
                 const context = await browser.newContext();
                 const page = await context.newPage();
-                await page.goto(url);
 
-                const result = await handleOperation(operation, page, this, i);
-                await browser.close();
+                let result;
 
-                returnData.push(result);
+                if (operation === 'runCustomScript') {
+                    // Custom script doesn't need URL navigation beforehand
+                    console.log(`Processing ${i + 1} of ${items.length}: [runCustomScript] Custom Script`);
+                    result = await runCustomScript(this, i, browser, page, playwright);
+                    await browser.close();
+                    returnData.push(...result);
+                } else {
+                    // Standard operations need URL navigation
+                    const url = this.getNodeParameter('url', i) as string;
+                    await page.goto(url);
+
+                    result = await handleOperation(operation, page, this, i);
+                    await browser.close();
+                    returnData.push(result);
+                }
             } catch (error) {
                 console.error(`Browser launch error:`, error);
                 if (this.continueOnFail()) {
