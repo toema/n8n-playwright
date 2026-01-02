@@ -81,14 +81,15 @@ jobs:
           git push origin HEAD:${{ github.ref_name }}
           git push --tags
 
-      - name: Configure npm authentication
+      - name: Publish to npm (using granular token)
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-
-      - name: Publish to npm
-        run: npm publish --access public
+          # Configure npm to use the granular access token
+          npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_GRANULAR_TOKEN }}
+          
+          # Publish with public access
+          npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_GRANULAR_TOKEN }}
 
       - name: Get final version
         id: final-version
