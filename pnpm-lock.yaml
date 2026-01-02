@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@n8n/vm2':
+        specifier: ^3.9.25
+        version: 3.9.25
       fs-extra:
         specifier: ^11.2.0
         version: 11.2.0
@@ -96,6 +99,11 @@ packages:
   '@n8n/tournament@1.0.2':
     resolution: {integrity: sha512-fTpi7F8ra5flGSVfRzohPyG7czAAKCZPlLjdKdwbLJivLoI/Ekhgodov1jfVSCVFVbwQ06gRQRxLEDzl2jl8ig==}
     engines: {node: '>=18.10', pnpm: '>=8.6'}
+
+  '@n8n/vm2@3.9.25':
+    resolution: {integrity: sha512-qoGLFzyHBW7HKpwXkl05QKsIh3GkDw6lOiTOWYlUDnOIQ1b7EgM+O5EMjrMGy7r+kz52+Q7o6GLxBIcxVI8rEg==}
+    engines: {node: '>=18.10', pnpm: '>=9.6'}
+    hasBin: true
 
   '@n8n_io/riot-tmpl@4.0.0':
     resolution: {integrity: sha512-/xw8HQgYQlBCrt3IKpNSSB1CgpP7XArw1QTRjP+KEw+OHT8XGvHxXrW9VGdUu9RwDnzm/LFu+dNLeDmwJMeOwQ==}
@@ -2181,6 +2189,11 @@ snapshots:
       ast-types: 0.16.1
       esprima-next: 5.8.4
       recast: 0.22.0
+
+  '@n8n/vm2@3.9.25':
+    dependencies:
+      acorn: 8.12.1
+      acorn-walk: 8.3.4
 
   '@n8n_io/riot-tmpl@4.0.0':
     dependencies:
