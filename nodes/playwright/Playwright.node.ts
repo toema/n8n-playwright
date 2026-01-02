@@ -45,31 +45,31 @@ export class Playwright implements INodeType {
                     name: 'Click Element',
                     value: 'clickElement',
                     description: 'Click on an element',
-																				action: 'Click on an element',
+                    action: 'Click on an element',
                 },
                 {
                     name: 'Fill Form',
                     value: 'fillForm',
                     description: 'Fill a form field',
-																				action: 'Fill a form field',
+                    action: 'Fill a form field',
                 },
                 {
                     name: 'Get Text',
                     value: 'getText',
                     description: 'Get text from an element',
-																				action: 'Get text from an element',
+                    action: 'Get text from an element',
                 },
                 {
                     name: 'Navigate',
                     value: 'navigate',
                     description: 'Navigate to a URL',
-																				action: 'Navigate to a URL',
+                    action: 'Navigate to a URL',
                 },
                 {
                     name: 'Take Screenshot',
                     value: 'takeScreenshot',
                     description: 'Take a screenshot of a webpage',
-																				action: 'Take a screenshot of a webpage',
+                    action: 'Take a screenshot of a webpage',
                 }
             ],
             default: 'navigate',
@@ -89,33 +89,80 @@ export class Playwright implements INodeType {
             },
             required: true,
         },
-				{
-    displayName: 'Property Name',
-    name: 'dataPropertyName',
-    type: 'string',
-    required: true,
-    default: 'screenshot',
-    description: 'Name of the binary property in which to store the screenshot data',
-    displayOptions: {
-        show: {
-            operation: ['takeScreenshot'],
-        },
-    },
-},
         {
-            displayName: 'Selector',
-            name: 'selector',
+            displayName: 'Property Name',
+            name: 'dataPropertyName',
             type: 'string',
-            default: '',
-            placeholder: '#submit-button',
-            description: 'CSS selector for the element',
+            required: true,
+            default: 'screenshot',
+            description: 'Name of the binary property in which to store the screenshot data',
+            displayOptions: {
+                show: {
+                    operation: ['takeScreenshot'],
+                },
+            },
+        },
+        
+        // Selector Type - NEW
+        {
+            displayName: 'Selector Type',
+            name: 'selectorType',
+            type: 'options',
+            options: [
+                {
+                    name: 'CSS Selector',
+                    value: 'css',
+                    description: 'Use CSS selector (e.g., #submit-button, .my-class)',
+                },
+                {
+                    name: 'XPath',
+                    value: 'xpath',
+                    description: 'Use XPath expression (e.g., //button[@id="submit"])',
+                }
+            ],
+            default: 'css',
+            description: 'Choose between CSS selector or XPath',
             displayOptions: {
                 show: {
                     operation: ['getText', 'clickElement', 'fillForm'],
                 },
             },
+        },
+        
+        // CSS Selector field
+        {
+            displayName: 'CSS Selector',
+            name: 'selector',
+            type: 'string',
+            default: '',
+            placeholder: '#submit-button',
+            description: 'CSS selector for the element (e.g., #id, .class, button[type="submit"])',
+            displayOptions: {
+                show: {
+                    operation: ['getText', 'clickElement', 'fillForm'],
+                    selectorType: ['css'],
+                },
+            },
             required: true,
         },
+        
+        // XPath field
+        {
+            displayName: 'XPath',
+            name: 'xpath',
+            type: 'string',
+            default: '',
+            placeholder: '//button[@id="submit"]',
+            description: 'XPath expression for the element (e.g., //div[@class="content"], //button[text()="Click Me"])',
+            displayOptions: {
+                show: {
+                    operation: ['getText', 'clickElement', 'fillForm'],
+                    selectorType: ['xpath'],
+                },
+            },
+            required: true,
+        },
+        
         {
             displayName: 'Value',
             name: 'value',
@@ -241,7 +288,6 @@ export class Playwright implements INodeType {
                 await page.goto(url);
 
                 const result = await handleOperation(operation, page, this, i);
-                console.log(`Operation result:`, result);
                 await browser.close();
 
                 returnData.push(result);
